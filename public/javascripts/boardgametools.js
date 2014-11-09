@@ -41,7 +41,7 @@ function loadGamePlays (startDate, endDate, userName, rowTemplate) {
                     }
                 });
 
-                var group = function (array, groupBy, sortBy, byItem)
+                var group = function (array, groupBy, sumBy)
                 {
                     var groupedArray = [];
                     var dictionary = {};
@@ -55,7 +55,28 @@ function loadGamePlays (startDate, endDate, userName, rowTemplate) {
 
                     for (var property in dictionary) {
                         var dictArray = dictionary[property];
-                        var itemCount = dictArray.length;
+                        var itemCount = 0;
+                        if (sumBy)
+                        {
+                            // Total up sumBy values
+                            $.each(dictArray, function (index, item) {
+                                if (item[sumBy])
+                                {
+                                    itemCount = itemCount + item[sumBy];
+                                }
+                                else
+                                {
+                                    // Just add one if we can't find the sum column
+                                    itemCount = itemCount + 1;
+                                }
+                            });
+                        }
+                        else
+                        {
+                            // Use count if no sum
+                            var itemCount = dictArray.length;
+                        }
+
                         var firstItem = null;
                         if (dictArray.length > 0) {
                             firstItem = dictArray[0];
@@ -211,7 +232,7 @@ function loadGamePlays (startDate, endDate, userName, rowTemplate) {
                     playList.push(newPlay);
                 });
 
-                var processedList = group(playList, 'gameName', 'count');
+                var processedList = group(playList, 'gameName', 'quantity');
                 $.each(processedList, function(index, game) {
 
                     if (game.first) {

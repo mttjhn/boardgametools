@@ -21,9 +21,9 @@ block content
           input.form-control(id="username", type="text", name="Username", placholder="BGG Username", value='mcjohnsons')
         div.form-group
           label(for='rowtemplate') Row Template
-          textarea.form-control(id='rowtemplate', rows="3") {gamecount}x {gamename}
-            | [if {isExpansion} = true] [i]{gamecount}x {gamename}[/i]
-            | [if {isNewToMe} = true] [b]{gamecount}x {gamename}[/b]
+          textarea.form-control(id='rowtemplate', rows="3") {gamecount}x [thing={gameid}]{gamename}[/thing]
+            | [if {isExpansion} = true] [i]{gamecount}x [thing={gameid}]{gamename}[/thing][/i]
+            | [if {isNewToMe} = true] [b]{gamecount}x [thing={gameid}]{gamename}[/thing][/b]
         button.btn.btn-default(id="calculate") Calculate
   div.container
     div.panel.panel-default
