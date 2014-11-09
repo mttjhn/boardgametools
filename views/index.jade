@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  script(src='/javascripts/boardgametools.js')
+  div.top
+    div.container
+      h1= title
+      p Welcome to #{title}
+  div.container
+    div.panel.panel-default
+      div.panel-heading Game Play Listing Parameters
+      div.panel-body
+        div.form-group
+          label(for='startdate') Start Date
+          input.form-control(id="startdate", type="text", name="Start Date", placeholder="YYYY-MM-DD", value='2014-01-01')
+        div.form-group
+          label(for='enddate') End Date
+          input.form-control(id="enddate", type="text", name="End Date", placeholder="YYYY-MM-DD", value='2014-04-30')
+        div.form-group
+          label(for='username') User Name
+          input.form-control(id="username", type="text", name="Username", placholder="BGG Username", value='mcjohnsons')
+        div.form-group
+          label(for='rowtemplate') Row Template
+          textarea.form-control(id='rowtemplate', rows="3") {gamecount}x {gamename}
+            | [if {isExpansion} = true] [i]{gamecount}x {gamename}[/i]
+            | [if {isNewToMe} = true] [b]{gamecount}x {gamename}[/b]
+        button.btn.btn-default(id="calculate") Calculate
+  div.container
+    div.panel.panel-default
+      div.panel-heading Data Crunching Results
+      div.panel-body
+        pre.pre-scrollable(id='output')
+  div.footer
