@@ -29,6 +29,8 @@ if ('development' == app.get('env')) {
 }
 
 app.get('/', routes.index);
+app.get('/playhistory', routes.playhistory);
+app.get('/lastplays', routes.lastplays);
 
 //map all possible bgg routes
 bgg.types.forEach(function(type){

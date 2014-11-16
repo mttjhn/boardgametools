@@ -1,0 +1,21 @@
+extends layout
+
+block content
+  script(src='/javascripts/lastplays.js')
+  div.top
+    div.container
+      h1= title
+  div.container
+    div.panel.panel-default
+      div.panel-heading Last Play Listing Parameters
+      div.panel-body
+        div.form-group
+          label(for='username') User Name
+          input.form-control(id="username", type="text", name="Username", placholder="BGG Username", value='mcjohnsons')
+        button.btn.btn-default(id="calculate") Calculate
+  div.container
+    div.panel.panel-default
+      div.panel-heading Last Play Results
+      div.panel-body
+        pre.pre-scrollable(id='output')
+  div.footer

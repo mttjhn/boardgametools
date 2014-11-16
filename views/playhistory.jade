@@ -1,0 +1,33 @@
+extends layout
+
+block content
+  script(src='/javascripts/playhistory.js')
+  div.top
+    div.container
+      h1= title
+      p Welcome to #{title}
+  div.container
+    div.panel.panel-default
+      div.panel-heading Game Play Listing Parameters
+      div.panel-body
+        div.form-group
+          label(for='startdate') Start Date
+          input.form-control(id="startdate", type="text", name="Start Date", placeholder="YYYY-MM-DD", value='2014-01-01')
+        div.form-group
+          label(for='enddate') End Date
+          input.form-control(id="enddate", type="text", name="End Date", placeholder="YYYY-MM-DD", value='2014-04-30')
+        div.form-group
+          label(for='username') User Name
+          input.form-control(id="username", type="text", name="Username", placholder="BGG Username", value='mcjohnsons')
+        div.form-group
+          label(for='rowtemplate') Row Template
+          textarea.form-control(id='rowtemplate', rows="3") {gamecount}x [thing={gameid}]{gamename}[/thing]
+            | [if {isExpansion} = true] [i]{gamecount}x [thing={gameid}]{gamename}[/thing][/i]
+            | [if {isNewToMe} = true] [b]{gamecount}x [thing={gameid}]{gamename}[/thing][/b]
+        button.btn.btn-default(id="calculate") Calculate
+  div.container
+    div.panel.panel-default
+      div.panel-heading Play History Results
+      div.panel-body
+        pre.pre-scrollable(id='output')
+  div.footer
