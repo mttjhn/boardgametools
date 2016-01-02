@@ -14,12 +14,14 @@ $(function(){
 var playHistoryData = [];
 
 function loadPlayData (startDate, endDate, userName, rowTemplate) {
+    //Clear our array of results!
+    playHistoryData = [];
+    //Start getting data!
     var maxPages = 10;
     var getFunctions = [];
     // Get first page of plays, so we can determine the total.
     $.get( '/api/plays', { username: userName, mindate: startDate, maxdate: endDate, page: 1 } )
     .done(function( data ) {
-        console.log(data);
         // Calculate the total...
         if (data.plays.total) {
             var pageCount = Math.ceil(data.plays.total/100);
@@ -41,7 +43,6 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
                         playHistoryData = playHistoryData.concat(pageData.plays.play);
                     }
                 }));
-            console.log(getFunctions);
         }
 
         
