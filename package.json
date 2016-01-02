@@ -6,8 +6,9 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "bgg": "~0.2.1",
     "express": "3.4.8",
     "jade": "*",
-    "bgg": "~0.2.1"
+    "moment": "^2.10.6"
   }
 }

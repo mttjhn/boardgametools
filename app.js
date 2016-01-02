@@ -10,6 +10,7 @@ var http = require('http');
 var path = require('path');
 
 var app = express();
+app.locals.moment = require('moment'); // For date handling in Jade
 
 // all environments
 app.set('port', process.env.PORT || 3000);

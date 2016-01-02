@@ -1,5 +1,6 @@
 extends layout
 
+
 block content
   script(src='/javascripts/playhistory.js')
   div.top
@@ -12,10 +13,10 @@ block content
       div.panel-body
         div.form-group
           label(for='startdate') Start Date
-          input.form-control(id="startdate", type="text", name="Start Date", placeholder="YYYY-MM-DD", value='2014-01-01')
+          input.form-control(id="startdate", type="text", name="Start Date", placeholder="YYYY-MM-DD", value= moment(Date.now()).subtract(1, 'months').startOf('month').format('YYYY-MM-DD'))
         div.form-group
           label(for='enddate') End Date
-          input.form-control(id="enddate", type="text", name="End Date", placeholder="YYYY-MM-DD", value='2014-04-30')
+          input.form-control(id="enddate", type="text", name="End Date", placeholder="YYYY-MM-DD", value= moment(Date.now()).subtract(1, 'months').endOf('month').format('YYYY-MM-DD'))
         div.form-group
           label(for='username') User Name
           input.form-control(id="username", type="text", name="Username", placholder="BGG Username", value='mcjohnsons')
