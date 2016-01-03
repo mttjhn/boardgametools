@@ -6,9 +6,15 @@
     "start": "node app.js"
   },
   "dependencies": {
+<<<<<<< Updated upstream
     "bgg": "~0.2.1",
     "express": "3.4.8",
     "jade": "*",
     "moment": "^2.10.6"
+=======
+    "bgg": "^0.2.2",
+    "express": "3.4.8",
+    "jade": "*"
+>>>>>>> Stashed changes
   }
 }
