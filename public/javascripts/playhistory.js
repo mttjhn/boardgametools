@@ -51,29 +51,7 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
             // Do the actual load of plays!!
             var playDisplay = '';
             var playList = [];
-            var templateRows = [];
             var newToMeDictionary = {};
-
-            //Parse rowtemplates
-            var rowTemplateLines = rowTemplate.match(/^.*([\n\r]+|$)/gm); //Split into lines
-            $.each(rowTemplateLines, function (index, value) {
-                //Look for IF statement
-                if (value.toLowerCase().indexOf('[if') >= 0) {
-                    var templateObj = {
-                        type: 'conditional',
-                        logic: value.substr(value.toLowerCase().indexOf('[if')+3, (value.toLowerCase().indexOf(']') - (value.toLowerCase().indexOf('[if')+3))).trim(),
-                        content: value.substr(value.toLowerCase().indexOf(']', value.toLowerCase().indexOf('[if'))+1).trim() }
-                    templateRows.push(templateObj);
-                }
-                else {
-                    var templateObj = {
-                        type: 'regular',
-                        logic: null,
-                        content: value
-                    }
-                    templateRows.push(templateObj);
-                }
-            });
 
             var group = function (array, groupBy, sumBy)
             {
@@ -155,72 +133,26 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
                 }
             }
 
-            var processTemplateTags = function (template, game) {
-                var processedString = template;
-                processedString = processedString.replace('{gamename}', game.first.gameName);
-                processedString = processedString.replace('{gameid}', game.first.gameId);
-                processedString = processedString.replace('{gamecount}', game.count);
-                processedString = processedString.replace('{isExpansion}', game.first.isExpansion.toString());
-                processedString = processedString.replace('{isNewToMe}', checkIfGameIsNewToMe(game.first.gameId));
-                return processedString;
-            }
-
             var processGamePlay = function (game) {
-                var processedRow = '';
-                var templateToUse = null;
-                var operand = '=';
-                $.each(templateRows, function(index, template) {
-                    if (template.type === 'conditional') {
-                        if (template.logic) {
-                            var lessThanIndex = template.logic.indexOf('<') >= 0;
-                            var greaterThanIndex = template.logic.indexOf('>') >= 0;
-                            var equalsIndex = template.logic.indexOf('=') >= 0;
-                            var operand = '=';
-                            if (lessThanIndex) {
-                                operand = '<';
-                            } else if (greaterThanIndex) {
-                                operand = '>';
-                            } else if (equalsIndex) {
-                                operand = '=';
-                            }
+                // prepare object with supported fields
+                var dataObject = {
+                    gamename: game.first.gameName,
+                    gameid: game.first.gameId,
+                    gamecount: game.count,
+                    isexpansion: game.first.isExpansion.toString(),
+                    isnewtome: checkIfGameIsNewToMe(game.first.gameId)
+                };
 
-                            var leftSide = template.logic.substr(0, template.logic.indexOf(operand)-1).trim();
-                            var rightSide = template.logic.substr(template.logic.indexOf(operand)+1).trim();
-
-                            leftSide = processTemplateTags(leftSide, game);
-                            rightSide = processTemplateTags(rightSide, game);
-
-                            switch (operand) {
-                                case '=':
-                                    if (leftSide.toLowerCase() === rightSide.toLowerCase()) {
-                                        templateToUse = template;
-                                    }
-                                    break;
-                               /* case '<':
-                                    if (leftSide < rightSide) {
-                                        templateToUse = template;
-                                    }
-                                    break;
-                                case '>':
-                                    if (leftSide > rightSide) {
-                                        templateToUse = template;
-                                    }
-                                    break; */
-                            }
-                        }
-                    }
-                    else {
-                        if (!templateToUse) {
-                            templateToUse = template;
-                        }
-                    }
-                });
-
-                if (templateToUse) {
-                    processedRow = processTemplateTags(templateToUse.content.trim(), game);
-                }
-                return processedRow;
+                var compiledTemp = _.template(rowTemplate);
+                return compiledTemp(dataObject).trim();
             }
+
+            var totalPlays = 0,
+                totalGames = 0,
+                newToMeGames = 0,
+                newToMePlays = 0,
+                expansionPlays = 0,
+                expansionGames = 0;
 
             //Process Play Data
             $.each(playHistoryData, function (index, play) {
@@ -266,13 +198,43 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
                 playList.push(newPlay);
             });
 
+
             var processedList = group(playList, 'gameName', 'quantity');
             $.each(processedList, function(index, game) {
 
                 if (game.first) {
+                    // Construct totals
+                    totalPlays = totalPlays + game.count;
+                    totalGames = totalGames + 1;
+                    if (checkIfGameIsNewToMe(game.first.gameId) === 'true') {
+                        newToMeGames = newToMeGames + 1;
+                        newToMePlays = newToMePlays + game.count;
+                    }
+                    if (game.first.isExpansion.toString() === 'true') {
+                        expansionPlays = expansionPlays + game.count;
+                        expansionGames = expansionGames + 1;
+                    }
+
+                    // Add game row to the display
                     playDisplay = playDisplay + processGamePlay(game) + '\n';
                 }
             });
+
+            //Add header to playDisplay
+            var headerTemplate = 'Total of <%= totalplays %> plays of <%= totalgames %> distinct games, <%= expansionplays %> of which were expansion plays (<%= expansiongames %> games), and <%= newtomegames %> games that were new to me (<%= newtomeplays %> plays).';
+            var headerData = {
+                totalplays: totalPlays,
+                totalgames: totalGames,
+                expansiongames: expansionGames,
+                expansionplays: expansionPlays,
+                newtomegames: newToMeGames,
+                newtomeplays: newToMePlays
+            };
+            var compiledHeaderTemplate = _.template(headerTemplate);
+            var headerText = compiledHeaderTemplate(headerData);
+            playDisplay = headerText + '\n\n' + playDisplay;
+
+            // Print the full output to the display
             $('#output').html(playDisplay);
         });
     });

@@ -22,9 +22,15 @@ block content
           input.form-control(id="username", type="text", name="Username", placholder="BGG Username", value='mcjohnsons')
         div.form-group
           label(for='rowtemplate') Row Template
-          textarea.form-control(id='rowtemplate', rows="3") {gamecount}x [thing={gameid}]{gamename}[/thing]
-            | [if {isExpansion} = true] [i]{gamecount}x [thing={gameid}]{gamename}[/thing][/i]
-            | [if {isNewToMe} = true] [b]{gamecount}x [thing={gameid}]{gamename}[/thing][/b]
+          textarea.form-control(id='rowtemplate', rows="3") <% if (isexpansion === 'true' && isnewtome === 'true') { %>
+            | [b][i]<%= gamecount %>x [thing=<%= gameid %>]<%= gamename %>[/thing][/i][/b]
+            | <% } else if (isexpansion === 'true') { %>
+            | [i]<%= gamecount %>x [thing=<%= gameid %>]<%= gamename %>[/thing][/i]
+            | <% } else if (isnewtome === 'true') { %>
+            | [b]<%= gamecount %>x [thing=<%= gameid %>]<%= gamename %>[/thing][/b]
+            | <% } else { %>
+            | <%= gamecount %>x [thing=<%= gameid %>]<%= gamename %>[/thing]
+            | <% } %>
         button.btn.btn-default(id="calculate") Calculate
   div.container
     div.panel.panel-default
