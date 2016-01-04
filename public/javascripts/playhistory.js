@@ -173,15 +173,27 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
                 //Calculate new to me
                 var isNewToMe = false;
                 if (play.players && play.players.player) {
-                    $.each(play.players.player, function(index, value) {
-                        if(value.username && value.username === userName) {
-                           if (value.new === 1) {
-                               newToMeDictionary[play.item.objectid] = true;
-                           } else if (!newToMeDictionary[play.item.objectid]) {
-                               newToMeDictionary[play.item.objectid] = false;
-                           }
-                       }
-                    });
+                    if (_.isArray(play.players.player)) {
+                        $.each(play.players.player, function (index, value) {
+                            if (value.username && value.username === userName) {
+                                if (value.new === 1) {
+                                    newToMeDictionary[play.item.objectid] = true;
+                                } else if (!newToMeDictionary[play.item.objectid]) {
+                                    newToMeDictionary[play.item.objectid] = false;
+                                }
+                            }
+                        });
+                    }
+                    else {
+                        var playerValue = play.players.player;
+                        if (playerValue.username && playerValue.username === userName) {
+                            if (playerValue.new === 1) {
+                                newToMeDictionary[play.item.objectid] = true;
+                            } else if (!newToMeDictionary[play.item.objectid]) {
+                                newToMeDictionary[play.item.objectid] = false;
+                            }
+                        }
+                    }
                 }
 
                 var newPlay = {
