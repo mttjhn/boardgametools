@@ -13,7 +13,7 @@ $(function(){
 
 var playHistoryData = [];
 
-var loadPlayData = function (startDate, endDate, userName, rowTemplate) {
+function loadPlayData (startDate, endDate, userName, rowTemplate) {
     //Clear our array of results!
     playHistoryData = [];
     //Start getting data!
