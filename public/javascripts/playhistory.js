@@ -13,7 +13,7 @@ $(function(){
 
 var playHistoryData = [];
 
-function loadPlayData (startDate, endDate, userName, rowTemplate) {
+var loadPlayData = function (startDate, endDate, userName, rowTemplate) {
     //Clear our array of results!
     playHistoryData = [];
     //Start getting data!
@@ -33,16 +33,19 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
             playHistoryData = playHistoryData.concat(data.plays.play);
         }
 
+        // Helper function to avoid having a function in a loop
+        var concatPlayHistory = function (pageData) {
+            // Load in the plays!
+            if (pageData.plays) {
+                playHistoryData = playHistoryData.concat(pageData.plays.play);
+            }
+        };
+
         // Construct an array of functions for a deferred
         for (i = 2; i <= maxPages; i++) { 
             getFunctions.push(
                 $.get( '/api/plays', { username: userName, mindate: startDate, maxdate: endDate, page: i } )
-                .done(function( pageData ) {
-                    // Load in the plays!
-                    if (pageData.plays) {
-                        playHistoryData = playHistoryData.concat(pageData.plays.play);
-                    }
-                }));
+                .done(concatPlayHistory));
         }
 
         
@@ -71,36 +74,42 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
                     if (sumBy)
                     {
                         // Total up sumBy values
-                        $.each(dictArray, function (index, item) {
-                            if (item[sumBy])
+                        for (i = 0; i < dictArray.length; i++) { 
+                            var item = dictArray[i];
+                            // Double check for an item
+                            if (item)
                             {
-                                itemCount = itemCount + item[sumBy];
+                                // If we find the sum column, add that to the count
+                                if (item[sumBy])
+                                {
+                                    itemCount = itemCount + item[sumBy];
+                                }
+                                else 
+                                {
+                                    // Just add one if we can't find the sum column
+                                    itemCount = itemCount + 1;
+                                }
                             }
-                            else
-                            {
-                                // Just add one if we can't find the sum column
-                                itemCount = itemCount + 1;
-                            }
-                        });
+                        }
                     }
                     else
                     {
                         // Use count if no sum
-                        var itemCount = dictArray.length;
+                        itemCount = dictArray.length;
                     }
 
                     var firstItem = null;
                     if (dictArray.length > 0) {
                         firstItem = dictArray[0];
                     }
-                    var groupedItem = { count: itemCount, first: firstItem, values: dictArray }
+                    var groupedItem = { count: itemCount, first: firstItem, values: dictArray };
                     groupedArray.push(groupedItem);
                 }
 
                 groupedArray = sortItems(groupedArray);
 
                 return groupedArray;
-            }
+            };
 
             var sortItems = function (array) {
                 return array.sort(function(a, b) {
@@ -122,7 +131,7 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
                     if (g1 > g2) return 1;
                     return 0;
                 });
-            }
+            };
 
             var checkIfGameIsNewToMe = function (gameId) {
                 var dictionaryValue = newToMeDictionary[gameId];
@@ -131,7 +140,7 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
                 } else {
                     return 'false';
                 }
-            }
+            };
 
             var processGamePlay = function (game) {
                 // prepare object with supported fields
@@ -145,7 +154,7 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
 
                 var compiledTemp = _.template(rowTemplate);
                 return compiledTemp(dataObject).trim();
-            }
+            };
 
             var totalPlays = 0,
                 totalGames = 0,
@@ -199,13 +208,13 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
                 var newPlay = {
                     id: play.id,
                     date: new Date(play.date),
-                    quantity: new Number(play.quantity),
+                    quantity: Number(play.quantity),
                     gameName: play.item.name,
                     gameId: play.item.objectid,
                     comments: play.comments,
                     subtype: subtype,
                     isExpansion: isExpansion
-                }
+                };
 
                 playList.push(newPlay);
             });
@@ -250,4 +259,4 @@ function loadPlayData (startDate, endDate, userName, rowTemplate) {
             $('#output').html(playDisplay);
         });
     });
-};
+}
