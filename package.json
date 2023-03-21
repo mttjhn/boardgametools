@@ -6,12 +6,11 @@
     "start": "node app.js"
   },
   "dependencies": {
-    "bgg": "~0.2.2",
-    "express": "3.4.8",
-    "favicon": "0.0.2",
-    "jade": "*",
-    "json": "^9.0.3",
-    "moment": "^2.10.6",
-    "path": "^0.12.7"
+    "bgg": "1.0.1",
+    "express": "4.18.2",
+    "pug": "*",
+    "json": "11.0.0",
+    "moment": "2.29.4",
+    "path": "0.12.7"
   }
 }
