@@ -7,7 +7,7 @@
   },
   "dependencies": {
     "bgg": "1.0.1",
-    "express": "4.18.2",
+    "express": "4.19.2",
     "pug": "*",
     "json": "11.0.0",
     "moment": "2.29.4",
